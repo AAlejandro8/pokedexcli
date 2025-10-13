@@ -17,8 +17,8 @@ type cacheEntry struct {
 }
 
 
-func NewCache(interval time.Duration) Cache {
-	c := Cache{
+func NewCache(interval time.Duration) *Cache {
+	c := &Cache{
 		entry: make(map[string]cacheEntry),
 		interval: interval,
 	}
@@ -49,6 +49,23 @@ func (c *Cache) Get(key string) ([]byte, bool) {
 	return e.val, true
 }
 
-func reapLoop() {
+func (c *Cache) reapLoop() {
+	// make a timer
+	ticker := time.NewTicker(c.interval)
+	defer ticker.Stop()
 
+	for range ticker.C {
+		now := time.Now()
+		c.mutex.Lock()
+		for k, e := range c.entry {
+			// is expired one inerval after it was inserted
+			expiresAt := e.createdAt.Add(c.interval)
+			// the entry is older than the interval if true, so delete
+			if expiresAt.Before(now) {
+				delete(c.entry, k)
+			}
+		}
+		c.mutex.Unlock()
+
+	}
 }

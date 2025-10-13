@@ -11,10 +11,20 @@ import (
 
 func (c *Client) GetLocationAreas(pageURL *string) (LocationAreaList,error) {
 	fullURL := BaseURL + "/location-area"
+	locations := LocationAreaList{}
 	// if we get a pageUrl make it the new url
 	if pageURL != nil {
 		fullURL = *pageURL
 	}
+	// try the cache
+	val, ok := c.cache.Get(fullURL)
+	if ok {
+		if err := json.Unmarshal(val, &locations); err != nil{
+			return LocationAreaList{}, err
+		}
+		return locations, nil
+	}
+
 	// make the request
 	req, err := http.NewRequest("GET", fullURL, nil)
 	if err != nil {
@@ -36,10 +46,12 @@ func (c *Client) GetLocationAreas(pageURL *string) (LocationAreaList,error) {
 	if err != nil {
 		return LocationAreaList{}, err
 	}
+	//cache the bytes for future fast readings
+	c.cache.Add(fullURL, data)
+
 	// make empty struct and unmarashal the []bytes into the struct
-	locations := LocationAreaList{}
 	if err = json.Unmarshal(data, &locations); err != nil {
-		return LocationAreaList{}, nil
+		return LocationAreaList{}, err
 	}
 	
 	return locations, nil
