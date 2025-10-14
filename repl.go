@@ -11,6 +11,7 @@ import (
 
 type config struct {
 	pokeapiClient pokeapi.Client
+	location string
 	next *string
 	prev *string
 }
@@ -48,6 +49,11 @@ func getCommands() map[string]cliCommand {
 			description: "Displays the last 20 locations",
 			callback: callbackMapb,	
 		},
+		"explore": {
+			name: "explore <location>",
+			description: "Displays all pokemon in the area",
+			callback: callbackExplore,
+		},
 	}
 }
 
@@ -65,16 +71,22 @@ func startRepl(cfg *config){
 			continue
 		}
 		
+		// extract info 
 		commandName := cleaned[0]
-
+		if len(cleaned) > 1 {
+			cfg.location = cleaned[1]
+		}
+		// get the commands
 		availableCommands := getCommands()
 
+		// does the command we call even exist?
 		command, ok := availableCommands[commandName]
 		if !ok {
 			fmt.Println("Invalid command!")
 			continue
 		}
-		
+
+		// make the call back with the info needed
 		if err := command.callback(cfg); err != nil {
 			fmt.Println("error", err)
 		}

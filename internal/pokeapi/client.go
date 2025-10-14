@@ -3,11 +3,12 @@ package pokeapi
 import (
 	"net/http"
 	"time"
+	pokeapi "github.com/AAlejandro8/pokedexcli/internal/pokeapi/pokecache"
 )
 
 type Client struct {
 	httpClient http.Client
-	cache *Cache
+	cache *pokeapi.Cache
 }
 
 func NewClient() Client{
@@ -15,6 +16,6 @@ func NewClient() Client{
 		httpClient: http.Client{
 			Timeout: time.Minute,
 		},
-		cache: NewCache(time.Second * 5),
+		cache: pokeapi.NewCache(time.Second * 5),
 	}
 }
