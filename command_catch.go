@@ -8,7 +8,7 @@ import (
 
 func callbackCatch(cfg *config, args ...string) error {
 	if len(args) != 1 {
-		return fmt.Errorf("Pokemon name not provided")
+		return fmt.Errorf("pokemon name not provided")
 	}
 	pokemon := args[0]
 	resp, err := cfg.pokeapiClient.GetPokemonInfo(pokemon)

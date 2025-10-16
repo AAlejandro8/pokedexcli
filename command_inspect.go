@@ -4,7 +4,7 @@ import "fmt"
 
 func callbackInspect(cfg *config, args ...string) error {
 	if len(args) != 1 {
-		return fmt.Errorf("Pokemon name not provided")
+		return fmt.Errorf("pokemon name not provided")
 	}
 	pokemonToInspect := args[0]
 	pokemon, ok := cfg.pokedex[pokemonToInspect]

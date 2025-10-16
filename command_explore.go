@@ -4,7 +4,7 @@ import "fmt"
 
 func callbackExplore(cfg *config, args ...string) error {
 	if len(args) != 1 {
-		return fmt.Errorf("Location not provided")
+		return fmt.Errorf("location not provided")
 	}
 	location := args[0]
 	resp, err := cfg.pokeapiClient.ExploreLocation(location)
