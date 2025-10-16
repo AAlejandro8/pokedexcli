@@ -5,12 +5,14 @@ import (
 	"fmt"
 	"os"
 	"strings"
-
 	"github.com/AAlejandro8/pokedexcli/internal/pokeapi"
 )
+type Pokedex map[string]pokeapi.Pokemon
 
 type config struct {
 	pokeapiClient pokeapi.Client
+	pokedex Pokedex
+	pokemon string
 	location string
 	next *string
 	prev *string
@@ -50,9 +52,14 @@ func getCommands() map[string]cliCommand {
 			callback: callbackMapb,	
 		},
 		"explore": {
-			name: "explore <location>",
+			name: 		"explore <location>",
 			description: "Displays all pokemon in the area",
 			callback: callbackExplore,
+		},
+		"catch" : {
+			name: 		"catch",
+			description: "Chance to catch a pokemon",
+			callback: callbackCatch,
 		},
 	}
 }
@@ -73,8 +80,12 @@ func startRepl(cfg *config){
 		
 		// extract info 
 		commandName := cleaned[0]
-		if len(cleaned) > 1 {
+		// command cases
+		if len(cleaned) > 1 && commandName == "explore" {
 			cfg.location = cleaned[1]
+		}
+		if len(cleaned) > 1 && commandName == "catch" {
+			cfg.pokemon = cleaned[1]
 		}
 		// get the commands
 		availableCommands := getCommands()
