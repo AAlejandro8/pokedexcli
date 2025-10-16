@@ -6,19 +6,23 @@ import (
 )
 
 
-func callbackCatch(cfg *config) error {
-	resp, err := cfg.pokeapiClient.GetPokemonInfo(cfg.pokemon)
+func callbackCatch(cfg *config, args ...string) error {
+	if len(args) != 1 {
+		return fmt.Errorf("Pokemon name not provided")
+	}
+	pokemon := args[0]
+	resp, err := cfg.pokeapiClient.GetPokemonInfo(pokemon)
 	if err != nil {
 		return err
 	}
-	fmt.Printf("Throwing a Pokeball at %s...\n", cfg.pokemon)
+	fmt.Printf("Throwing a Pokeball at %s...\n", pokemon)
 	chanceToCatch := resp.BaseExperience
 	roll := rand.Intn(1000)
 	if roll > chanceToCatch*2 {
-		fmt.Printf("%s was caught!\n", cfg.pokemon)
-		cfg.pokedex[cfg.pokemon] = resp
+		fmt.Printf("%s was caught!\n", pokemon)
+		cfg.pokedex[pokemon] = resp
 	}else {
-		fmt.Printf("%s escaped!\n", cfg.pokemon)
+		fmt.Printf("%s escaped!\n", pokemon)
 	}
 	return nil
 }
